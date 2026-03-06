@@ -23,12 +23,16 @@
 import XCTest
 @testable import UITextView_Placeholder
 
+@MainActor
 class Tests: XCTestCase {
 
-  var textView: UITextView!
+    
+ nonisolated var  textView: UITextView!
 
   // MARK: Setup
 
+
+    
   override func setUp() {
     super.setUp()
     self.textView = UITextView()
@@ -39,9 +43,9 @@ class Tests: XCTestCase {
 
   func testPlaceholderText() {
     self.textView.placeholder = "Hello"
-    XCTAssertEqual(self.textView.placeholderTextView.text, "Hello")
+    XCTAssertEqual(self.textView.placeholderTextView?.text, "Hello")
     self.textView.placeholder = nil
-    XCTAssertEqual(self.textView.placeholderTextView.text.count, 0)
+      XCTAssertEqual(self.textView.placeholderTextView?.text.count, 0)
   }
 
   func testAttributedPlaceholder() {
@@ -49,16 +53,30 @@ class Tests: XCTestCase {
     self.textView.attributedPlaceholder = attributedPlaceholder
     XCTAssertEqual(self.textView.attributedPlaceholder, attributedPlaceholder)
   }
+    
+    func testAttributedPlaceholderIsOptional() {
+        
+        let keyPath: ReferenceWritableKeyPath<UITextView, NSAttributedString?> =
+        \UITextView.attributedPlaceholder
+        
+        let placeholder = NSAttributedString(string: "test")
+        textView[keyPath: keyPath] = placeholder
+        
+        XCTAssertEqual(
+            textView[keyPath: keyPath]?.string,
+            "test"
+        )
+    }
 
   func testplaceholderTextViewHasSuperviewWhileNotEditing() {
     self.textView.placeholder = "Placeholder"
-    XCTAssertEqual(self.textView.placeholderTextView.superview, self.textView)
+      XCTAssertEqual(self.textView.placeholderTextView?.superview, self.textView)
   }
 
   func testplaceholderTextViewHasNoSuperviewWhileEditing() {
     self.textView.text = "ABC"
     self.textView.placeholder = "Placeholder"
-    XCTAssertNil(self.textView.placeholderTextView.superview)
+      XCTAssertNil(self.textView.placeholderTextView?.superview)
   }
 
 
@@ -67,15 +85,15 @@ class Tests: XCTestCase {
   func testSetFont_beforePlaceholder() {
     self.textView.font = UIFont.systemFont(ofSize: 34)
     self.textView.placeholder = "Hello"
-    XCTAssertEqual(self.textView.placeholderTextView.text, "Hello")
-    XCTAssertEqual(self.textView.placeholderTextView.font, UIFont.systemFont(ofSize: 34))
+      XCTAssertEqual(self.textView.placeholderTextView?.text, "Hello")
+    XCTAssertEqual(self.textView.placeholderTextView?.font, UIFont.systemFont(ofSize: 34))
   }
 
   func testSetFont_afterPlaceholder() {
     self.textView.placeholder = "Hello"
     self.textView.font = UIFont.systemFont(ofSize: 34)
-    XCTAssertEqual(self.textView.placeholderTextView.text, "Hello")
-    XCTAssertEqual(self.textView.placeholderTextView.font, UIFont.systemFont(ofSize: 34))
+      XCTAssertEqual(self.textView.placeholderTextView?.text, "Hello")
+    XCTAssertEqual(self.textView.placeholderTextView?.font, UIFont.systemFont(ofSize: 34))
   }
 
   func testSetFont_beforeAttributedPlaceholder() {
@@ -99,14 +117,14 @@ class Tests: XCTestCase {
     self.textView.font = UIFont.systemFont(ofSize: 32)
     self.textView.placeholder = "Placeholder text..."
     self.textView.text = "Hello, world!"
-    XCTAssertEqual(self.textView.placeholderTextView.font, UIFont.systemFont(ofSize: 32))
+    XCTAssertEqual(self.textView.placeholderTextView?.font, UIFont.systemFont(ofSize: 32))
   }
 
   func testSetPlaceholderAfterText() {
     self.textView.font = UIFont.boldSystemFont(ofSize: 30)
     self.textView.text = "Hello, world!"
     self.textView.placeholder = "Placeholder text..."
-    XCTAssertEqual(self.textView.placeholderTextView.font, UIFont.boldSystemFont(ofSize: 30))
+    XCTAssertEqual(self.textView.placeholderTextView?.font, UIFont.boldSystemFont(ofSize: 30))
   }
 
 
@@ -123,15 +141,21 @@ class Tests: XCTestCase {
     self.textView.placeholder = longPlaceholder
 
     // When: We calculate how much space the placeholder needs
-    let fittingSize = self.textView.placeholderTextView.sizeThatFits(
-      CGSize(width: self.textView.frame.width, height: .greatestFiniteMagnitude)
-    )
+    
 
     // Then: The placeholder frame should be tall enough to display all content
-    XCTAssertGreaterThanOrEqual(
-      self.textView.placeholderTextView.frame.height,
-      fittingSize.height,
-      "Placeholder frame should be tall enough to display multi-line content without cut-off"
-    )
+      XCTAssertNotNil(self.textView.placeholderTextView)
+      if let placeholderTextView = self.textView.placeholderTextView {
+          let fittingSize = placeholderTextView.sizeThatFits(
+            CGSize(width: self.textView.frame.width, height: .greatestFiniteMagnitude)
+          )
+          XCTAssertGreaterThanOrEqual(
+            placeholderTextView.frame.height,
+            fittingSize.height,
+            "Placeholder frame should be tall enough to display multi-line content without cut-off"
+          )
+          
+      }
+    
   }
 }

@@ -31,12 +31,12 @@ FOUNDATION_EXPORT const unsigned char UITextView_PlaceholderVersionString[];
 
 @interface UITextView (Placeholder)
 
-@property (nonatomic, readonly) UITextView *placeholderTextView NS_SWIFT_NAME(placeholderTextView);
+@property (nonatomic, readonly) UITextView * _Nullable placeholderTextView NS_SWIFT_NAME(placeholderTextView);
 
-@property (nonatomic, strong) IBInspectable NSString *placeholder;
-@property (nonatomic, strong) NSAttributedString *attributedPlaceholder;
-@property (nonatomic, strong) IBInspectable UIColor *placeholderColor;
+@property (nonatomic, strong, nullable) IBInspectable NSString *placeholder;
+@property (nonatomic, strong, nullable) NSAttributedString *attributedPlaceholder;
+@property (nonatomic, strong, nullable) IBInspectable UIColor *placeholderColor;
 
-+ (UIColor *)defaultPlaceholderColor;
++ (UIColor *_Nullable)defaultPlaceholderColor;
 
 @end

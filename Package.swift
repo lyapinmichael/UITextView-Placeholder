@@ -7,7 +7,7 @@ let package = Package(
     platforms: [.iOS(.v12)],
     products: [
         .library(
-            name: "UITextView-Placeholder",
+            name: "UITextView_Placeholder",
             targets: ["UITextView-Placeholder"]),
     ],
     targets: [
@@ -15,5 +15,10 @@ let package = Package(
             name: "UITextView-Placeholder",
             path: "Sources",
             publicHeadersPath: "."),
+        .testTarget(
+            name: "UITextView-Placeholder-test",
+            dependencies: ["UITextView-Placeholder"],
+            path: "Tests",
+        )
     ]
 )
